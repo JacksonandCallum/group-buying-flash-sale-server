@@ -11,7 +11,6 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
 
-# \u914D\u7F6Emybatis\u5B9E\u4F53\u548Cxml\u6620\u5C04
 mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

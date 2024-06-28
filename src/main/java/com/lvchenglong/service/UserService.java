@@ -18,7 +18,7 @@ public class UserService {
         if(dbUser == null){
             throw new CustomException("账号不存在");
         }
-        String md5Password = SecureUtil.md5(dbUser.getPassword() + Constant.PASSWORD_SALT);
+        String md5Password = SecureUtil.md5(user.getPassword() + Constant.PASSWORD_SALT);
         if(!dbUser.getPassword().equals(md5Password)){
             throw new CustomException("密码错误");
         }
