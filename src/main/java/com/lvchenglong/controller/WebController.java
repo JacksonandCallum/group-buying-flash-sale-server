@@ -28,4 +28,15 @@ public class WebController {
         User dbUser = userService.login(user);
         return Result.success(dbUser);
     }
+
+    /**
+     * 修改密码
+     * @param user
+     * @return
+     */
+    @PutMapping("/updatePassword")
+    public Result updatePassword(@RequestBody User user){
+        userService.updatePassword(user);
+        return Result.success();
+    }
 }

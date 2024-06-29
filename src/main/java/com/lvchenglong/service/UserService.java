@@ -23,7 +23,7 @@ public class UserService {
         if(dbUser == null){
             throw new CustomException("账号不存在");
         }
-        String md5Password = SecureUtil.md5(user.getPassword() + Constant.PASSWORD_SALT);
+        String md5Password = securePassword(user.getPassword());
         if(!dbUser.getPassword().equals(md5Password)){
             throw new CustomException("密码错误");
         }
@@ -42,10 +42,12 @@ public class UserService {
             throw new CustomException("账号已存在");
         }
         if(ObjectUtil.isEmpty(user.getPassword())){
-            throw new CustomException("密码为空，请输入密码");
+            throw new CustomException("密码不能为空");
+        }else{
+            user.setPassword(securePassword(user.getPassword()));
         }
         if(ObjectUtil.isEmpty(user.getName())){
-            throw new CustomException("姓名为空，请输入姓名");
+            user.setName(user.getUsername());
         }
         userMapper.insert(user);
     }
@@ -81,5 +83,22 @@ public class UserService {
         return PageInfo.of(list);
     }
 
+    public String securePassword(String password){
+        return SecureUtil.md5(password + Constant.PASSWORD_SALT);
+    }
 
+    public void updatePassword(User user) {
+        User dbUser = userMapper.selectByUserName(user.getUsername());
+        if(ObjectUtil.isEmpty(dbUser)){
+            throw new CustomException("账户不存在");
+        }
+        String md5Password = securePassword(user.getPassword());
+        if(!dbUser.getPassword().equals(md5Password)){
+            throw new CustomException("你输入的密码与原密码不一致");
+        }
+        // 加密新密码
+        user.setNewPassword(securePassword(user.getNewPassword()));
+        // 修改密码
+        userMapper.updatePassword(user);
+    }
 }

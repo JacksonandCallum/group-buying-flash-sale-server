@@ -15,7 +15,7 @@
             <if test="phone != null">phone,</if>
             <if test="email != null">email,</if>
         </trim>
-        <trim prefix="(" suffix=")" suffixOverrides=",">
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
             <if test="username != null">#{username},</if>
             <if test="password != null">#{password},</if>
@@ -30,15 +30,15 @@
     <update id="updateById">
         update user
         <set>
-            <if test="username != null">username = #{username}</if>
-        --  <if test="password != null">password = #{password}</if>
-            <if test="name != null">name = #{name}</if>
-            <if test="role != null">role = #{role}</if>
-            <if test="avatar != null">avatar = #{avatar}</if>
-            <if test="phone != null">phone = #{phone}</if>
-            <if test="email != null">email = #{email}</if>
+            <if test="username != null">username = #{username},</if>
+             <if test="password != null">password = #{password},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="role != null">role = #{role},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="email != null">email = #{email},</if>
         </set>
-        <where> id = #{id}</where>
+        <where> id = #{id} </where>
     </update>
 
     <delete id="deleteById">
@@ -53,7 +53,7 @@
     <select id="selectAll" resultType="com.lvchenglong.entity.User">
         select * from user
         <where>
-            <if test="username != null">and username = #{username}</if>
+            <if test="username != null and username != ''">and username = #{username}</if>
         </where>
         order by id desc
     </select>
