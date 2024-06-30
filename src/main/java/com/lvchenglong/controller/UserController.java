@@ -1,5 +1,6 @@
 package com.lvchenglong.controller;
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.github.pagehelper.PageInfo;
 import com.lvchenglong.common.Result;
 import com.lvchenglong.entity.User;
@@ -51,6 +52,7 @@ public class UserController {
         return Result.success(list);
     }
 
+    @SaCheckRole("ADMIN")
     @GetMapping("/selectPage")
     public Result selectPage(User user,
                              @RequestParam(defaultValue = "1") Integer pageNum,

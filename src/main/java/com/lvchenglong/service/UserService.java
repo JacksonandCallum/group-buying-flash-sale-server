@@ -1,13 +1,16 @@
 package com.lvchenglong.service;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lvchenglong.common.Constant;
+import com.lvchenglong.common.enums.RoleEnum;
 import com.lvchenglong.entity.User;
 import com.lvchenglong.exception.CustomException;
 import com.lvchenglong.mapper.UserMapper;
+import com.lvchenglong.utils.SaUtils;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +30,10 @@ public class UserService {
         if(!dbUser.getPassword().equals(md5Password)){
             throw new CustomException("密码错误");
         }
+        // 返回token
+        StpUtil.login(dbUser.getId());
+        String token = StpUtil.getTokenValue();
+        dbUser.setToken(token);
         return dbUser;
     }
 
@@ -92,9 +99,13 @@ public class UserService {
         if(ObjectUtil.isEmpty(dbUser)){
             throw new CustomException("账户不存在");
         }
-        String md5Password = securePassword(user.getPassword());
-        if(!dbUser.getPassword().equals(md5Password)){
-            throw new CustomException("你输入的密码与原密码不一致");
+        // 获取当前登录用户，如果角色是用户就校验原密码
+        User loginUser = SaUtils.getLoginUser();
+        if(RoleEnum.USER.name().equals(loginUser.getRole())){
+            String md5Password = securePassword(user.getPassword());
+            if(!dbUser.getPassword().equals(md5Password)){
+                throw new CustomException("你输入的密码与原密码不一致");
+            }
         }
         // 加密新密码
         user.setNewPassword(securePassword(user.getNewPassword()));
