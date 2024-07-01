@@ -37,6 +37,11 @@ public class UserService {
         return dbUser;
     }
 
+    public void register(User user) {
+        user.setRole(RoleEnum.USER.name());
+        this.add(user);
+    }
+
     public void add(User user) {
         if(ObjectUtil.isEmpty(user.getUsername())){
             throw new CustomException("账号不能为空");
@@ -112,4 +117,5 @@ public class UserService {
         // 修改密码
         userMapper.updatePassword(user);
     }
+
 }

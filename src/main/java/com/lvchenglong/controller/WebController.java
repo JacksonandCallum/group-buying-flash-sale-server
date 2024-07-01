@@ -30,6 +30,17 @@ public class WebController {
     }
 
     /**
+     * 注册接口
+     * @param user
+     * @return
+     */
+    @PostMapping("/register")
+    public Result register(@RequestBody User user){
+        userService.register(user);
+        return Result.success();
+    }
+
+    /**
      * 修改密码
      * @param user
      * @return

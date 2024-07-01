@@ -15,19 +15,19 @@ import java.util.List;
 public class UserController {
     @Resource
     UserService userService;
-
+    @SaCheckRole("ADMIN")
     @PostMapping("/add")
     public Result add(@RequestBody User user){
         userService.add(user);
         return Result.success();
     }
-
+    @SaCheckRole("ADMIN")
     @DeleteMapping("/delete/{id}")
     public Result delete(@PathVariable Integer id){
         userService.delete(id);
         return Result.success();
     }
-
+    @SaCheckRole("ADMIN")
     @DeleteMapping("/deleteBatch")
     public Result deleteBatch(@RequestBody List<Integer> ids){
         userService.deleteBatch(ids);
@@ -45,7 +45,7 @@ public class UserController {
         User user = userService.selectById(id);
         return Result.success(user);
     }
-
+    @SaCheckRole("ADMIN")
     @GetMapping("/selectAll")
     public Result selectAll(User user){
         List<User> list = userService.selectAll(user);
