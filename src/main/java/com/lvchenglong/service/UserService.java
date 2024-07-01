@@ -6,7 +6,9 @@ import cn.hutool.crypto.SecureUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lvchenglong.common.Constant;
+import com.lvchenglong.common.enums.LogsModuleEnum;
 import com.lvchenglong.common.enums.RoleEnum;
+import com.lvchenglong.common.system.AsyncTaskFactory;
 import com.lvchenglong.entity.User;
 import com.lvchenglong.exception.CustomException;
 import com.lvchenglong.mapper.UserMapper;
@@ -34,12 +36,20 @@ public class UserService {
         StpUtil.login(dbUser.getId());
         String token = StpUtil.getTokenValue();
         dbUser.setToken(token);
+
+        System.out.println("============login 开始执行异步任务============");
+        // 异步日志记录
+        AsyncTaskFactory.recordLog(LogsModuleEnum.USER.value, "登录", dbUser.getId());
+        System.out.println("============login 异步任务执行结束============");
+
         return dbUser;
     }
 
     public void register(User user) {
         user.setRole(RoleEnum.USER.name());
         this.add(user);
+        // 异步日志记录
+        AsyncTaskFactory.recordLog(LogsModuleEnum.USER.value, "注册", user.getId());
     }
 
     public void add(User user) {
@@ -62,6 +72,7 @@ public class UserService {
             user.setName(user.getUsername());
         }
         userMapper.insert(user);
+
     }
 
     public void delete(Integer id) {
@@ -114,6 +125,8 @@ public class UserService {
         }
         // 加密新密码
         user.setNewPassword(securePassword(user.getNewPassword()));
+        // 异步日志记录
+        AsyncTaskFactory.recordLog(LogsModuleEnum.USER.value, "修改密码", loginUser.getId());
         // 修改密码
         userMapper.updatePassword(user);
     }
