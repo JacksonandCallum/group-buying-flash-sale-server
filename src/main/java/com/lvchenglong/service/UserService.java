@@ -12,6 +12,7 @@ import com.lvchenglong.common.system.AsyncTaskFactory;
 import com.lvchenglong.entity.User;
 import com.lvchenglong.exception.CustomException;
 import com.lvchenglong.mapper.UserMapper;
+import com.lvchenglong.utils.RedisUtils;
 import com.lvchenglong.utils.SaUtils;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,18 @@ public class UserService {
     @Resource
     private UserMapper userMapper;
     public User login(User user) {
+        String uuid = user.getUuid();
+        String captchaKey = Constant.REDIS_KEY_CAPTCHA + uuid;
+        String captchaCode = RedisUtils.getCacheObject(captchaKey);
+        if (captchaCode == null){
+            throw new CustomException("验证码已失效");
+        }
+        if(!user.getCode().equals(captchaCode)) {
+            throw new CustomException("验证码错误");
+        }
+        // 验证完成后删除缓存
+        RedisUtils.deleteObject(captchaKey);
+
         String username = user.getUsername();
         User dbUser = userMapper.selectByUserName(username);
         if(dbUser == null){

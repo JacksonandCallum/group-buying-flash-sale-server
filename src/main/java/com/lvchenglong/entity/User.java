@@ -14,4 +14,8 @@ public class User {
     private String email;
     private String newPassword;
     private String token;
+    // 验证码的key
+    private String uuid;
+    // 用户填写的验证码
+    private String code;
 }
