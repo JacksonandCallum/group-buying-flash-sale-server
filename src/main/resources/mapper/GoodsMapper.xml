@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lvchenglong.mapper.GoodsMapper">
+    <insert id="insert" parameterType="com.lvchenglong.entity.Goods" useGeneratedKeys="true" keyProperty="id">
+        insert into goods
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="originPrice != null">origin_price,</if>
+            <if test="hasGroup != null">has_group,</if>
+            <if test="groupPrice != null">group_price,</if>
+            <if test="hasFlash != null">has_flash,</if>
+            <if test="flashPrice != null">flash_price,</if>
+            <if test="content != null">content,</if>
+            <if test="img != null">img,</if>
+            <if test="categoryId != null">category_id,</if>
+            <if test="date != null">date,</if>
+            <if test="store != null">store,</if>
+            <if test="flashTime != null">flash_time,</if>
+            <if test="flashNum != null">flash_num,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="originPrice != null">#{originPrice},</if>
+            <if test="hasGroup != null">#{hasGroup},</if>
+            <if test="groupPrice != null">#{groupPrice},</if>
+            <if test="hasFlash != null">#{hasFlash},</if>
+            <if test="flashPrice != null">#{flashPrice},</if>
+            <if test="content != null">#{content},</if>
+            <if test="img != null">#{img},</if>
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="date != null">#{date},</if>
+            <if test="store != null">#{store},</if>
+            <if test="flashTime != null">#{flashTime},</if>
+            <if test="flashNum != null">#{flashNum},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById">
+        update goods
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="originPrice != null">origin_price = #{originPrice},</if>
+            <if test="hasGroup != null">has_group = #{hasGroup},</if>
+            <if test="groupPrice != null">group_price = #{groupPrice},</if>
+            <if test="hasFlash != null">has_flash = #{hasFlash},</if>
+            <if test="flashPrice != null">flash_price = #{flashPrice},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="img != null">img = #{img},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="date != null">date = #{date},</if>
+            <if test="store != null">store = #{store},</if>
+            <if test="flashTime != null">flash_time = #{flashTime},</if>
+            <if test="flashNum != null">flash_num = #{flashNum},</if>
+        </set>
+        <where> id = #{id} </where>
+    </update>
+
+    <delete id="deleteById">
+        delete from goods where id = #{id}
+    </delete>
+
+
+    <select id="selectAll" resultType="com.lvchenglong.entity.Goods">
+        select goods.* , category.name categoryName
+        from goods
+        left join category on goods.category_id = category.id
+        <where>
+            <if test="name != null and name != ''">and goods.name like concat('%',#{name},'%')</if>
+            <if test="categoryId != null and categoryId != ''">and goods.category_id = #{categoryId}</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectById" resultType="com.lvchenglong.entity.Goods">
+        select * from goods
+        <where>
+            <if test="id != null">and id = #{id}</if>
+        </where>
+    </select>
+</mapper>
