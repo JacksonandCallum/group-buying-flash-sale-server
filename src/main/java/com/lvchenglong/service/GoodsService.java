@@ -54,4 +54,8 @@ public class GoodsService {
     }
 
 
+    public List<Goods> selectFlash(Goods goods) {
+        List<Goods> list = goodsMapper.selectAll(goods);
+        return list.size() > 2 ? list.subList(0,2) : list;
+    }
 }

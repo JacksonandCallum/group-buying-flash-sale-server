@@ -45,7 +45,7 @@ public class GoodsController {
         Goods goods = goodsService.selectById(id);
         return Result.success(goods);
     }
-    @SaCheckRole("ADMIN")
+    // @SaCheckRole("ADMIN")
     @GetMapping("/selectAll")
     public Result selectAll(Goods goods){
         List<Goods> list = goodsService.selectAll(goods);
@@ -59,5 +59,16 @@ public class GoodsController {
                              @RequestParam(defaultValue = "10") Integer pageSize){
         PageInfo<Goods> pageInfo = goodsService.selectPage(goods,pageNum,pageSize);
         return Result.success(pageInfo);
+    }
+
+    /**
+     * 查询秒杀商品（限量2个）
+     * @param goods
+     * @return
+     */
+    @GetMapping("/selectFlash")
+    public Result selectFlash(Goods goods){
+        List<Goods> list = goodsService.selectFlash(goods);
+        return Result.success(list);
     }
 }

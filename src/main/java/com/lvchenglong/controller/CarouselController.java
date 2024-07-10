@@ -49,7 +49,7 @@ public class CarouselController {
         return Result.success(carousel);
     }
 
-    @SaCheckRole("ADMIN")
+    // @SaCheckRole("ADMIN")
     @GetMapping("/selectAll")
     public Result selectAll(Carousel carousel){
         List<Carousel> list = carouselService.selectAll(carousel);
