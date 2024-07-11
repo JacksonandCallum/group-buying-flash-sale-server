@@ -86,6 +86,7 @@
             <if test="groupOrderId != null">
                 group_order_id = #{groupOrderId},
             </if>
+            id = id <!-- 添加这一行确保SET部分永远不为空 -->
         </set>
         <where> id = #{id} </where>
     </update>
