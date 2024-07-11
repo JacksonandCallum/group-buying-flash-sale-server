@@ -18,7 +18,7 @@ public class OrdersController {
 
     /**
      * 下单（增加）
-     * @param orders
+     * @param orders(goodsId、num、type、groupOrderId)
      * @return
      */
     @PostMapping("/add")
