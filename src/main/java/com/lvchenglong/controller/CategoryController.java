@@ -45,7 +45,7 @@ public class CategoryController {
         Category category = categoryService.selectById(id);
         return Result.success(category);
     }
-    @SaCheckRole("ADMIN")
+    // @SaCheckRole("ADMIN")
     @GetMapping("/selectAll")
     public Result selectAll(Category category){
         List<Category> list = categoryService.selectAll(category);

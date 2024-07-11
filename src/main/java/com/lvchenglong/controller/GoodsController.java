@@ -52,7 +52,7 @@ public class GoodsController {
         return Result.success(list);
     }
 
-    @SaCheckRole("ADMIN")
+    // @SaCheckRole("ADMIN")
     @GetMapping("/selectPage")
     public Result selectPage(Goods goods,
                              @RequestParam(defaultValue = "1") Integer pageNum,
