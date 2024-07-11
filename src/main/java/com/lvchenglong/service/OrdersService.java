@@ -117,7 +117,7 @@ public class OrdersService implements InitializingBean {
         return orders;
     }
 
-    public Orders addFLashOrder(Orders orders) {
+    public Orders addFlashOrder(Orders orders) {
         // 设置堵塞，限制秒杀请求
         limiter.acquire();
         // 获取当前登录用户

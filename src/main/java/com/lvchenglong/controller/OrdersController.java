@@ -34,9 +34,9 @@ public class OrdersController {
      * @param orders
      * @return
      */
-    @PostMapping("/addFLashOrder")
-    public Result addFLashOrder(@RequestBody Orders orders){
-        Orders savedOrder = ordersService.addFLashOrder(orders);
+    @PostMapping("/addFlashOrder")
+    public Result addFlashOrder(@RequestBody Orders orders){
+        Orders savedOrder = ordersService.addFlashOrder(orders);
         return Result.success(savedOrder);
     }
 
