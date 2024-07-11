@@ -80,9 +80,11 @@
     </select>
 
     <select id="selectById" resultType="com.lvchenglong.entity.Goods">
-        select * from goods
+        select goods.* ,category.name as categoryName from goods
+        left join category
+        on goods.category_id = category.id
         <where>
-            <if test="id != null">and id = #{id}</if>
+            <if test="id != null">and goods.id = #{id}</if>
         </where>
     </select>
 </mapper>
