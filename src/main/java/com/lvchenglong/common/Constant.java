@@ -9,4 +9,6 @@ public interface Constant {
 
     // 验证码过期的时间。单位：分钟
     int CAPTCHA_EXPIRE_MINUTES = 1;
+
+    int FLASH_LIMIT_NUM = 10;
 }
