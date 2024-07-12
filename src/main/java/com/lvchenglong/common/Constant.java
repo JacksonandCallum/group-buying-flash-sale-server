@@ -11,4 +11,10 @@ public interface Constant {
     int CAPTCHA_EXPIRE_MINUTES = 1;
 
     int FLASH_LIMIT_NUM = 10;
+
+    // 支付宝沙箱网关地址
+    String ALIPAY_GATEWAY_URL = "https://openapi-sandbox.dl.alipaydev.com/gateway.do";
+    String ALIPAY_FORMAT = "JSON";
+    String ALIPAY_CHARSET = "UTF-8";
+    String ALIPAY_SIGN_TYPE = "RSA2";
 }

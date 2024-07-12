@@ -207,4 +207,8 @@ public class OrdersService implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         limiter =RateLimiter.create(Constant.FLASH_LIMIT_NUM);
     }
+
+    public Orders selectByOrderNo(String orderNo) {
+        return ordersMapper.selectByOrderNo(orderNo);
+    }
 }
