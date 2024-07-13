@@ -21,6 +21,7 @@ import com.lvchenglong.entity.Orders;
 import com.lvchenglong.exception.CustomException;
 import com.lvchenglong.service.OrdersService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -118,18 +119,18 @@ public class AliPayController {
 
             if ("TRADE_SUCCESS".equals(tradeStatus)) {
                 Orders orders = ordersService.selectByOrderNo(orderNo);
-                if(ObjectUtil.isNull(orders)){
+                if (ObjectUtil.isNull(orders)) {
                     throw new CustomException("未找到订单");
                 }
                 // 拼团订单
-                if(OrderTypeEnum.GROUP.name().equals(orders.getType())){
+                if (OrderTypeEnum.GROUP.name().equals(orders.getType())) {
                     // 拼团订单 改成拼团中状态
                     orders.setStatus(OrderStatusEnum.IN_GROUP.name());
                     // 找到一起拼团的订单
                     Integer groupOrderId = orders.getGroupOrderId();
-                    if(ObjectUtil.isNotNull(groupOrderId)){
+                    if (ObjectUtil.isNotNull(groupOrderId)) {
                         Orders groupOrder = ordersService.selectById(groupOrderId);
-                        if(ObjectUtil.isNull(groupOrder)){
+                        if (ObjectUtil.isNull(groupOrder)) {
                             throw new CustomException("未找到订单");
                         }
                         groupOrder.setStatus(OrderStatusEnum.NOT_SEND.name());
@@ -138,7 +139,7 @@ public class AliPayController {
                         // 待发货
                         orders.setStatus(OrderStatusEnum.NOT_SEND.name());
                     }
-                }else {
+                } else {
                     // 普通订单、秒杀订单
                     orders.setStatus(OrderStatusEnum.NOT_SEND.name());  // 支付完成后改成待发货状态
                 }
@@ -146,11 +147,17 @@ public class AliPayController {
                 orders.setPayTime(gmtPayment);
                 // 更新订单的支付信息
                 ordersService.updateById(orders);
+                log.info("订单状态已更新为待发货: {}", orders);
                 // 日志记录
-                AsyncTaskFactory.recordLog(LogsModuleEnum.ORDER.value, "订单支付回调成功，订单号【" + orderNo + "】",orders.getUserId());
+                AsyncTaskFactory.recordLog(LogsModuleEnum.ORDER.value, "订单支付回调成功，订单号【" + orderNo + "】", orders.getUserId());
+            } else {
+                log.info("交易未成功，状态: {}", tradeStatus);
             }
+        } else {
+            log.error("支付宝签名验证失败");
         }
     }
+
 
     /**
      * 退款接口
