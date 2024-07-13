@@ -3,9 +3,16 @@ package com.lvchenglong.service;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.json.JSONObject;
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.request.AlipayTradeRefundRequest;
+import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lvchenglong.common.Constant;
+import com.lvchenglong.common.config.AliPayConfig;
 import com.lvchenglong.common.enums.LogsModuleEnum;
 import com.lvchenglong.common.enums.OrderStatusEnum;
 import com.lvchenglong.common.enums.OrderTypeEnum;
@@ -18,6 +25,7 @@ import com.lvchenglong.mapper.OrdersMapper;
 import com.lvchenglong.utils.SaUtils;
 import com.revinate.guava.util.concurrent.RateLimiter;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,12 +35,16 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@Slf4j
 public class OrdersService implements InitializingBean {
     @Resource
     private OrdersMapper ordersMapper;
 
     @Resource
     private GoodsService goodsService;
+
+    @Resource
+    AliPayConfig aliPayConfig;
 
     private static final ConcurrentHashMap<Integer, Object> ordersMap = new ConcurrentHashMap<>();
 
@@ -210,5 +222,63 @@ public class OrdersService implements InitializingBean {
 
     public Orders selectByOrderNo(String orderNo) {
         return ordersMapper.selectByOrderNo(orderNo);
+    }
+
+    public List<Orders> selectByStatus(String status) {
+        return ordersMapper.selectByStatus(status);
+    }
+
+    /**
+     * 取消团购
+     * 发起退款
+     * 更改状态为取消
+     */
+    @Transactional
+    public void closeGroupOrder(Orders orders) {
+        // 1. 创建Client，通用SDK提供的Client，负责调用支付宝的API
+        AlipayClient alipayClient = new DefaultAlipayClient(Constant.ALIPAY_GATEWAY_URL, aliPayConfig.getAppId(),
+                aliPayConfig.getAppPrivateKey(), Constant.ALIPAY_FORMAT, Constant.ALIPAY_CHARSET, aliPayConfig.getAlipayPublicKey(), Constant.ALIPAY_SIGN_TYPE);
+
+        // 2. 创建 Request并设置Request参数
+        AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
+        request.setNotifyUrl(aliPayConfig.getNotifyUrl());
+        JSONObject bizContent = new JSONObject();
+        bizContent.set("out_trade_no", orders.getOrderNo());  // 我们自己生成的订单编号（不能重复）
+        bizContent.set("refund_amount", orders.getTotal()); // 订单的总金额
+        bizContent.set("trade_no", orders.getPayNo()); // 支付宝支付订单号
+        bizContent.set("out_request_no", IdUtil.fastSimpleUUID());   // 随机数
+        request.setBizContent(bizContent.toString());
+        try {
+            // 调用退款接口
+            AlipayTradeRefundResponse response = alipayClient.execute(request);
+            if (response.isSuccess()) {
+                log.info("订单号【{}】退款成功", orders.getOrderNo());
+                // 取消订单
+                this.cancel(orders);
+            }else {
+                log.info("订单号【{}】退款失败", orders.getOrderNo());
+            }
+        } catch (AlipayApiException e) {
+            log.error("退款失败", e);
+        }
+    }
+
+    /**
+     * 取消订单
+     * 释放库存
+     */
+    @Transactional  // 涉及到两个表的操作，保证同一事务中同时成功或者失败
+    public void cancel(Orders orders) {
+        // 更改待支付为取消
+        orders.setStatus(OrderStatusEnum.CANCEL.name());
+        Integer goodsId = orders.getGoodsId();
+        Goods goods = goodsService.selectById(goodsId);
+        if(ObjectUtil.isNotNull(goods)){
+            goods.setStore(goods.getStore() + orders.getNum());
+            // 更新商品库存
+            goodsService.updateById(goods);
+        }
+        // 更新订单状态
+        this.updateById(orders);
     }
 }

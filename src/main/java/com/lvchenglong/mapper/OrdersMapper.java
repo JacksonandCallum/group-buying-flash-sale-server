@@ -18,4 +18,7 @@ public interface OrdersMapper {
 
     @Select("select * from orders where order_no = #{orderNo}")
     Orders selectByOrderNo(String orderNo);
+
+    @Select("select * from orders where status = #{status}")
+    List<Orders> selectByStatus(String status);
 }
