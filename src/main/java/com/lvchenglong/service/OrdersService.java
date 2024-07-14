@@ -281,4 +281,10 @@ public class OrdersService implements InitializingBean {
         // 更新订单状态
         this.updateById(orders);
     }
+
+    public PageInfo<Orders> selectGroupPage(Orders orders, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum,pageSize);
+        List<Orders> list = ordersMapper.selectAllGroup(orders);
+        return PageInfo.of(list);
+    }
 }

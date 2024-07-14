@@ -72,12 +72,24 @@ public class OrdersController {
         return Result.success(list);
     }
 
-    @SaCheckRole("ADMIN")
+    // @SaCheckRole("ADMIN")
     @GetMapping("/selectPage")
     public Result selectPage(Orders orders,
                              @RequestParam(defaultValue = "1") Integer pageNum,
                              @RequestParam(defaultValue = "10") Integer pageSize){
         PageInfo<Orders> pageInfo = ordersService.selectPage(orders,pageNum,pageSize);
+        return Result.success(pageInfo);
+    }
+
+    /**
+     * 前台分页查询团购订单信息
+     * @return
+     */
+    @GetMapping("/selectGroupPage")
+    public Result selectGroupPage(Orders orders,
+                             @RequestParam(defaultValue = "1") Integer pageNum,
+                             @RequestParam(defaultValue = "10") Integer pageSize){
+        PageInfo<Orders> pageInfo = ordersService.selectGroupPage(orders,pageNum,pageSize);
         return Result.success(pageInfo);
     }
 }

@@ -21,4 +21,6 @@ public interface OrdersMapper {
 
     @Select("select * from orders where status = #{status}")
     List<Orders> selectByStatus(String status);
+
+    List<Orders> selectAllGroup(Orders orders);
 }

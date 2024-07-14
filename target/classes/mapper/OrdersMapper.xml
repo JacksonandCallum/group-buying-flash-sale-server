@@ -112,4 +112,11 @@
             <if test="id != null">and id = #{id}</if>
         </where>
     </select>
+    <select id="selectAllGroup" resultType="com.lvchenglong.entity.Orders">
+        select orders.*, user.name as userName, user.avatar as userAvatar from orders
+        left join user
+        on orders.user_id = user.id
+        where orders.type = 'GROUP' and orders.group_order_id IS NULL
+        order by id desc
+    </select>
 </mapper>
