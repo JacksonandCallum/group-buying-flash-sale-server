@@ -66,7 +66,7 @@ public class AliPayController {
         bizContent.set("subject", orders.getGoodsName() + "x" + orders.getNum());   // 支付的名称
         bizContent.set("product_code", "FAST_INSTANT_TRADE_PAY");  // 固定配置
         request.setBizContent(bizContent.toString());
-        request.setReturnUrl("http://127.0.0.1:5173/front/orders"); // 支付完成后自动跳转到本地页面的路径
+        request.setReturnUrl("http://localhost:5173/front/orders"); // 支付完成后自动跳转到本地页面的路径
         // 执行请求，拿到响应的结果，返回给浏览器
         String form = "";
         try {

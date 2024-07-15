@@ -31,6 +31,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -282,9 +285,18 @@ public class OrdersService implements InitializingBean {
         this.updateById(orders);
     }
 
-    public PageInfo<Orders> selectGroupPage(Orders orders, Integer pageNum, Integer pageSize) {
+    public PageInfo<Orders> selectGroupPage(Orders orders, Integer pageNum, Integer pageSize) throws ParseException {
         PageHelper.startPage(pageNum,pageSize);
         List<Orders> list = ordersMapper.selectAllGroup(orders);
+        for (Orders dbOrders : list) {
+            if (ObjectUtil.isNotEmpty(dbOrders.getPayTime())) {
+                long now = System.currentTimeMillis();
+                Date pay = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dbOrders.getPayTime());
+                // 开团结束时间默认是支付后24小时
+                long gap = pay.getTime() + 24 * 3600 * 1000 - now;
+                dbOrders.setMaxTime(gap / 1000);
+            }
+        }
         return PageInfo.of(list);
     }
 }

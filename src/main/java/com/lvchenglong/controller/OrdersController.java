@@ -8,6 +8,7 @@ import com.lvchenglong.service.OrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -88,7 +89,7 @@ public class OrdersController {
     @GetMapping("/selectGroupPage")
     public Result selectGroupPage(Orders orders,
                              @RequestParam(defaultValue = "1") Integer pageNum,
-                             @RequestParam(defaultValue = "10") Integer pageSize){
+                             @RequestParam(defaultValue = "10") Integer pageSize) throws ParseException {
         PageInfo<Orders> pageInfo = ordersService.selectGroupPage(orders,pageNum,pageSize);
         return Result.success(pageInfo);
     }

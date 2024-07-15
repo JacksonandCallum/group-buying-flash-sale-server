@@ -8,6 +8,7 @@ import com.lvchenglong.service.GoodsService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -56,7 +57,7 @@ public class GoodsController {
     @GetMapping("/selectPage")
     public Result selectPage(Goods goods,
                              @RequestParam(defaultValue = "1") Integer pageNum,
-                             @RequestParam(defaultValue = "10") Integer pageSize){
+                             @RequestParam(defaultValue = "10") Integer pageSize) throws ParseException {
         PageInfo<Goods> pageInfo = goodsService.selectPage(goods,pageNum,pageSize);
         return Result.success(pageInfo);
     }
@@ -67,7 +68,7 @@ public class GoodsController {
      * @return
      */
     @GetMapping("/selectFlash")
-    public Result selectFlash(Goods goods){
+    public Result selectFlash(Goods goods) throws ParseException {
         List<Goods> list = goodsService.selectFlash(goods);
         return Result.success(list);
     }

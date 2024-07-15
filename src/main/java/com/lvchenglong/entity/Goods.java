@@ -22,4 +22,5 @@ public class Goods {
     private Integer flashNum;
 
     private String categoryName;
+    private Long maxTime;
 }
