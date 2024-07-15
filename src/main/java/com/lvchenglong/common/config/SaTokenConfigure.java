@@ -18,6 +18,13 @@ public class SaTokenConfigure implements WebMvcConfigurer {
                 .excludePathPatterns("/web/register")
                 .excludePathPatterns("/web/captcha")
                 .excludePathPatterns("/files/download/**")
-                .excludePathPatterns("/alipay/**");
+                .excludePathPatterns("/alipay/**")
+                .excludePathPatterns("/carousel/selectAll")
+                .excludePathPatterns("/category/selectAll")
+                .excludePathPatterns("/goods/selectFlash")
+                .excludePathPatterns("/goods/selectPage")
+                .excludePathPatterns("/goods/selectById/**")
+                .excludePathPatterns("/orders/selectGroupPage")
+                .excludePathPatterns("/comment/selectAll");
     }
 }
